@@ -7,7 +7,8 @@ import Favorites from './FavoritesComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
 import Login from './LoginComponent';
-import { View, Platform, StyleSheet, Text, ScrollView, Image } from 'react-native';
+import { View, Platform, StyleSheet, Text, ScrollView, Image,
+    Alert, ToastAndroid } from 'react-native';
 import { createStackNavigator, createDrawerNavigator,
     DrawerItems } from 'react-navigation';
 import { Icon } from 'react-native-elements';
@@ -15,6 +16,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import { connect } from 'react-redux';
 import { fetchCampsites, fetchComments, fetchPromotions,
     fetchPartners } from '../redux/ActionCreators';
+import NetInfo from '@react-native-community/netinfo';
 
 const mapDispatchToProps = {
     fetchCampsites,
@@ -322,7 +324,10 @@ class Main extends Component {
         this.props.fetchComments();
         this.props.fetchPromotions();
         this.props.fetchPartners();
+
     }
+
+    
 
     render() {
         return (
