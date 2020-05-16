@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet,
-    Picker, Switch, Button, Alert, ScrollView } from 'react-native';
+import { Text, View, ScrollView, StyleSheet,
+    Alert, Picker, Switch, Button, Modal } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import * as Animatable from 'react-native-animatable';
 import * as Permissions from 'expo-permissions';
@@ -14,7 +14,8 @@ class Reservation extends Component {
         this.state = {
             campers: 1,
             hikeIn: false,
-            date: ''
+            date: '',
+            showModal: false
         };
     }
 
@@ -22,25 +23,31 @@ class Reservation extends Component {
         title: 'Reserve Campsite'
     }
 
+    toggleModal() {
+        this.setState({showModal: !this.state.showModal});
+    }
+
     handleReservation() {
         console.log(JSON.stringify(this.state));
-        const message = `Number of Campers: ${this.state.campers}
-                        \nHike-In? ${this.state.hikeIn}
-                        \nDate: ${this.state.date}`;
+
+        let message = `Number of Campers: ${this.state.campers}\n\n` +
+            `Hike-In?: ${this.state.hikeIn}\n\n` +
+            `Date: ${this.state.date}`;
+
         Alert.alert(
             'Begin Search?',
             message,
             [
                 {
-                    text: 'Cancel', 
+                    text: 'Cancel',
+                    style: 'cancel',
                     onPress: () => {
-                        console.log('Reservation Search Canceled');
+                        console.log('Reservation search cancelled.');
                         this.resetForm();
-                    }, 
-                    style: 'cancel'
+                    }
                 },
                 {
-                    text: 'OK', 
+                    text: 'OK',
                     onPress: () => {
                         this.presentLocalNotification(this.state.date);
                         this.resetForm();
@@ -49,13 +56,16 @@ class Reservation extends Component {
             ],
             { cancelable: false }
         );
+        
+
     }
 
     resetForm() {
         this.setState({
             campers: 1,
             hikeIn: false,
-            date: ''
+            date: '',
+            showModal: false
         });
     }
 
@@ -81,10 +91,25 @@ class Reservation extends Component {
         }
     }
 
+
     render() {
-        return(
+        
+        const alertText = () => { 
+            return(
+                `Number of Campers: ${this.state.campers}\n
+                Hike-In?: ${this.state.hikeIn}\n
+                Date: ${this.state.date}`
+            );
+        }
+
+        
+        
+        return (
             <ScrollView>
-            <Animatable.View animation='zoomIn' duration={2000} delay={1000}>
+            <Animatable.View
+                animation='zoomIn' 
+                duration={2000} 
+                delay={1000}>
                 <View style={styles.formRow}>
                     <Text style={styles.formLabel}>Number of Campers</Text>
                     <Picker
@@ -135,7 +160,7 @@ class Reservation extends Component {
                 </View>
                 <View style={styles.formRow}>
                     <Button
-                        onPress={() => this.handleReservation()}
+                        onPress={() => {this.handleReservation()}}
                         title='Search'
                         color='#5637DD'
                         accessibilityLabel='Tap me to search for available campsites to reserve'
@@ -162,7 +187,7 @@ const styles = StyleSheet.create({
     formItem: {
         flex: 1
     },
-    modal: {
+    modal: { 
         justifyContent: 'center',
         margin: 20
     },

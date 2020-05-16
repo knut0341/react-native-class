@@ -3,9 +3,9 @@ import Home from './HomeComponent';
 import Directory from './DirectoryComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
 import About from './AboutComponent';
-import Favorites from './FavoritesComponent';
 import Contact from './ContactComponent';
 import Reservation from './ReservationComponent';
+import Favorites from './FavoritesComponent';
 import Login from './LoginComponent';
 import { View, Platform, StyleSheet, Text, ScrollView, Image,
     Alert, ToastAndroid } from 'react-native';
@@ -194,7 +194,7 @@ const LoginNavigator = createStackNavigator(
 
 const CustomDrawerContentComponent = props => (
     <ScrollView>
-        <SafeAreaView 
+        <SafeAreaView
             style={styles.container}
             forceInset={{top: 'always', horizontal: 'never'}}>
             <View style={styles.drawerHeader}>
@@ -209,8 +209,6 @@ const CustomDrawerContentComponent = props => (
         </SafeAreaView>
     </ScrollView>
 );
-
-
 
 const MainNavigator = createDrawerNavigator(
     {
@@ -325,22 +323,26 @@ class Main extends Component {
         this.props.fetchPromotions();
         this.props.fetchPartners();
 
-        NetInfo.fetch().then(connectionInfo => {
-            (Platform.OS === 'ios') ?
-                Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
-                : ToastAndroid.show('Initial Network Connectivity Type: ' +
-                    connectionInfo.type, ToastAndroid.LONG);
-        });
+        this.showNetInfo();
 
         this.unsubscribeNetInfo = NetInfo.addEventListener(connectionInfo => {
             this.handleConnectivityChange(connectionInfo);
         });
     }
 
+    async showNetInfo() {
+        const connectionInfo = await NetInfo.fetch();
+
+            (Platform.OS === 'ios') ?
+                Alert.alert('Initial Network Connectivity Type:', connectionInfo.type)
+                : ToastAndroid.show('Initial Network Connectivity Type: ' +
+                    connectionInfo.type, ToastAndroid.LONG);
+    }
+
     componentWillUnmount() {
         this.unsubscribeNetInfo();
     }
-    
+
     handleConnectivityChange = connectionInfo => {
         let connectionMsg = 'You are now connected to an active network.';
         switch (connectionInfo.type) {
@@ -375,7 +377,7 @@ class Main extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 1
     },
     drawerHeader: {
         backgroundColor: '#5637DD',
@@ -401,6 +403,5 @@ const styles = StyleSheet.create({
         fontSize: 24
     }
 });
-
 
 export default connect(null, mapDispatchToProps)(Main);
